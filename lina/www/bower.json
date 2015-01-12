@@ -1,0 +1,29 @@
+{
+  "name": "lina",
+  "version": "0.0.0",
+  "homepage": "https://github.com/techkeytrolls/lina",
+  "authors": [
+    "TechKeyTrolls <techkey.trolls@gmail.com>"
+  ],
+  "description": "Track your emotional health",
+  "main": "www/index.html",
+  "keywords": [
+    "emotion",
+    "health",
+    "depression",
+    "tracking",
+    "report"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.2"
+  }
+}
