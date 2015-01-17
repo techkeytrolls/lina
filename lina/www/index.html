@@ -21,15 +21,21 @@
 -->
 <html>
     <head>
+        <title>Emo Tracker</title>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">        
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">        
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
         
-        <link rel = "import" href = "bower_components/bower_components/paper-elements/paper-elements.html">
+        <script src="bower_components/webcomponentsjs/webcomponents.js"></script>        
+        
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        
+        <link rel="import" href = "bower_components/bower_components/paper-elements/paper-elements.html">
     </head>
     <body>
         <paper-button raised class="emobutton">Sad</paper-button>
@@ -40,7 +46,7 @@
             <paper-input label="New Event"></paper-input><br />
             <paper-button class="standard">Update</paper-button>
         </div>
-        
+        <paper-fab icon="add" onclick="document.querySelector('#toast1').show()"></paper-fab>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
