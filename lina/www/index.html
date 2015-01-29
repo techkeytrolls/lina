@@ -31,26 +31,138 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         
-        <script src="bower_components/webcomponentsjs/webcomponents.js"></script>        
-        
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-        
         <link rel="import" href = "bower_components/bower_components/paper-elements/paper-elements.html">
+        
+        <script type="text/javascript" charset="utf-8" src="cordova-x.x.x.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" ></script>
+        <script src="bower_components/webcomponentsjs/webcomponents.js"></script>  
+        <script type="text/javascript" charset="utf-8" >
+            
+// Wait for Cordova to load
+document.addEventListener("deviceready", onDeviceReady, false);
+onDeviceReady();
+var emoState = "";
+            
+// Cordova is ready
+function onDeviceReady() {
+    var db = window.openDatabase("Database", "1.0", "EmoTracker Demo", 200000);
+    db.transaction(populateDB, errorCB, successCB);
+}
+
+// Populate the database 
+function populateDB(tx) {
+    tx.executeSql('DROP TABLE IF EXISTS demo');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS demo (id unique, data, note)');
+    var dt = (new Date).getTime();
+    tx.executeSql('INSERT INTO demo (id, data) VALUES (' + dt + ', "Happy")');
+    tx.executeSql('SELECT * FROM demo',[] , passed, errorCB);
+}
+
+// Empty records
+function emptyEmos() {
+    var db = window.openDatabase("Database", "1.0", "EmoTracker Demo", 200000);
+    db.transaction(deleteAll, errorCB, successCB);
+    refreshRecords();
+}
+            
+// Delete all reconrds 
+function deleteAll(tx) {
+    tx.executeSql('DELETE FROM demo');
+}            
+            
+            
+// Insert Emo
+function insertEmo(input) {
+    var db = window.openDatabase("Database", "1.0", "EmoTracker Demo", 200000);
+    emoState = input;
+    db.transaction(insert, errorCB, successCB);
+    refreshRecords();
+}
+            
+// Insert 
+function insert(tx) {
+    var dt = (new Date).getTime();
+    tx.executeSql('INSERT INTO demo (id, data) VALUES (' + dt + ', "' + emoState + '")');
+}
+            
+            
+// Refresh records
+function refreshRecords() {
+    var db = window.openDatabase("Database", "1.0", "EmoTracker Demo", 200000);
+    db.transaction(retreiveRecords, errorCB, successCB);
+}
+            
+// Retreive reconds 
+function retreiveRecords(tx) {
+    tx.executeSql('SELECT * FROM demo order by id desc',[] , passed, errorCB);
+}
+
+  
+// Transaction error callback
+function errorCB(tx, err) {
+    alert("Error processing SQL: " + err);
+}
+
+// Transaction success callback
+function successCB() {
+    //alert("success!");
+}  
+
+    
+// Transaction success callback
+function passed(tx, results) {
+    var len = results.rows.length;
+    var resultDiv = $('#mydiv');
+    var data = "";
+    
+    var content = "";
+    content = content +        '<section id="table" class="box attribute-box">';
+    content = content +        '<h3 data-anchor-id="core-list.attributes">Emotions</h3>';
+    content = content +        '<template repeat="{{attribute in data.attributes}}"></template>';
+    
+    for (var i=0; i<len; i++){
+        content = content +            '<div class="details" horizontal="" layout="">';
+        content = content +            '<div class="details-name" flex="">';
+        content = content +                '<p><code data-anchor-id="core-list.attributes.height">'+ new Date(results.rows.item(i).id).toISOString() +'</code></p>'
+        content = content +            '</div>';
+        content = content +            '<div class="details-info" flex="" three="">';
+        content = content +                '<marked-element text="{{attribute.description}}">';
+        content = content +                    '<p>' + results.rows.item(i).data + '</p>';
+        content = content +                '</marked-element>';
+        content = content +            '</div>';
+        content = content +        '</div>';
+    }
+    
+    var tablelist = $("#table");
+    content = content +        '</section>';
+    tablelist.remove();
+    resultDiv.append(content);
+}
+       
+
+
+    
+    
+</script>
     </head>
     <body>
-        <paper-button raised class="emobutton">Sad</paper-button>
-        <paper-button raised class="emobutton">Happy</paper-button>
+        <paper-button raised class="emobutton" onclick="insertEmo('Sad')">Sad</paper-button>
+        <paper-button raised class="emobutton" onclick="insertEmo('Happy')">Happy</paper-button>
         
         <div class="bottom-pane">
             <h1>What Happened?</h1>
             <paper-input label="New Event"></paper-input><br />
             <paper-button class="standard">Update</paper-button>
         </div>
-        <paper-fab icon="add" onclick="document.querySelector('#toast1').show()"></paper-fab>
+
+        <paper-fab mini icon="refresh" onclick="refreshRecords()"></paper-fab>
+        <paper-fab mini icon="clear" onclick="emptyEmos()"></paper-fab>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             app.initialize();
         </script>
+        <div id="mydiv"></div>
     </body>
 </html>
