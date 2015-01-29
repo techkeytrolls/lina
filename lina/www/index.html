@@ -41,23 +41,19 @@
         <script type="text/javascript" charset="utf-8" >
             
 // Wait for Cordova to load
-document.addEventListener("deviceready", onDeviceReady, false);
-//onDeviceReady();
+document.addEventListener("deviceready", createDB(), false);
+//Please call this "createDB();" when you develop via desktop browser
 var emoState = "";
             
 // Cordova is ready
-function onDeviceReady() {
+function createDB() {
     var db = window.openDatabase("Database", "1.0", "EmoTracker Demo", 200000);
-    db.transaction(populateDB, errorCB, successCB);
+    db.transaction(createTable, errorCB, successCB);
 }
 
-// Populate the database 
-function populateDB(tx) {
-    tx.executeSql('DROP TABLE IF EXISTS demo');
+// Create database 
+function createTable(tx) {
     tx.executeSql('CREATE TABLE IF NOT EXISTS demo (id unique, data, note)');
-    var dt = (new Date).getTime();
-    tx.executeSql('INSERT INTO demo (id, data) VALUES (' + dt + ', "Happy")');
-    tx.executeSql('SELECT * FROM demo',[] , passed, errorCB);
 }
 
 // Empty records
