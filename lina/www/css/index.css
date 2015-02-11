@@ -32,7 +32,7 @@ html,body {
     height: 100px;
     margin: 5px;
     text-align: center;
-    
+    border: 1px solid #3333ff;
 }
 
 .bottom-pane {
@@ -79,6 +79,23 @@ h1, h2, h3, h4, h5 {
     letter-spacing: -0.01em;
     line-height: 48px;
     margin: 0;
+}
+
+nav {
+    width: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav ul li {
+    padding: 10px;
+    float: left;
+}
+
+#main {
+    clear: both;
 }
 
 user agent stylesheeth3 {
