@@ -83,6 +83,7 @@ h1, h2, h3, h4, h5 {
 
 nav {
     width: 100%;
+    height: 10%;
 }
 
 nav ul {
@@ -106,4 +107,38 @@ user agent stylesheeth3 {
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     font-weight: bold;
+}
+
+.pages{
+    position: absolute;
+    top: 10%;
+    width: 100%;
+}
+
+@keyframes slideOutLeft {
+    to      { transform: translateX(-100%); }
+}
+
+@keyframes slideInRight {
+    from    { transform:translateX(100%); }
+    to      { transform: translateX(0); }
+}
+
+@-webkit-keyframes slideOutLeft {
+    to      { transform: translateX(-100%); }
+}
+
+@-webkit-keyframes slideInRight {
+    from    { transform:translateX(100%); }
+    to      { transform: translateX(0); }
+}
+
+.pages.ng-enter {
+    -webkit-animation: slideInRight 0.2s both ease-in;
+    animation: slideInRight 0.2s both ease-in;
+}
+
+.pages.ng-leave {
+    -webkit-animation: slideOutLeft 0.2s both;
+    animation: slideOutLeft 0.2s both;
 }

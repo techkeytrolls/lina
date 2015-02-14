@@ -163,7 +163,7 @@ var app = {
     }
 };
 
-var emoApp = angular.module("emoApp", ['ngRoute']);
+var emoApp = angular.module("emoApp", ['ngRoute', 'ngAnimate']);
 
 emoApp.config(function($routeProvider) {
     $routeProvider
