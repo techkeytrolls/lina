@@ -16,6 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+"use strict";
+
 var appInitialized = false;
 var browser = true; // temporary solution
 
@@ -123,6 +125,10 @@ function appInit(){
         //Unleash all the cool javascript crazyness
         angular.bootstrap(document, ['emoApp']);
         createDB();
+        
+        document.addEventListener("backbutton", function(e){
+            navigator.app.exitApp();}, false);
+        
         appInitialized = true;
     }
 }
@@ -186,6 +192,13 @@ emoApp.config(function($routeProvider) {
             controller  : 'debugController'
         });
     
+});
+
+emoApp.controller("headerController", function($scope, $location){
+    $scope.test = $location.path();
+    $scope.isActive = function (viewLocation) {
+        return viewLocation === $location.path();
+    };
 });
 
 emoApp.controller("homeController", function($scope) {

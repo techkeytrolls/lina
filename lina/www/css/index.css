@@ -23,16 +23,17 @@
 html,body {
     height: 100%;
     margin: 0;
-    background-color: #FFFFFF;
+    background-color: #66BCDD;
     font-family: 'RobotoDraft', sans-serif;
 }
 
 .emobutton {
-    width: 95%;
+    width: 100%;
     height: 100px;
-    margin: 5px;
+    line-height: 100px;
     text-align: center;
-    border: 1px solid #3333ff;
+    vertical-align: middle;
+    display: inline-block;
 }
 
 .bottom-pane {
@@ -84,19 +85,34 @@ h1, h2, h3, h4, h5 {
 nav {
     width: 100%;
     height: 10%;
+    background: #FFD670;
+    border-bottom: 2px solid #43A4C9;
+}
+
+nav a {
+  text-decoration: none;
+  color: #000000;
+  display: block;
 }
 
 nav ul {
     list-style-type: none;
+    white-space: nowrap;
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
 nav ul li {
-    padding: 10px;
-    float: left;
-}
-
-#main {
-    clear: both;
+    height: 100%;
+    width: 120px;
+    padding: 0px 10px;
+    display: inline-block;
+    font-size: 1.4em;
+    line-height: 50px;
 }
 
 user agent stylesheeth3 {
@@ -109,10 +125,14 @@ user agent stylesheeth3 {
     font-weight: bold;
 }
 
-.pages{
+.pages {
     position: absolute;
     top: 10%;
     width: 100%;
+}
+
+.active {
+    background: #43A4C9;
 }
 
 @keyframes slideOutLeft {
