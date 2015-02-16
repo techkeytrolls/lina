@@ -20,6 +20,8 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 
+
+
 html,body {
     height: 100%;
     margin: 0;
@@ -43,8 +45,6 @@ html,body {
 .standard {
     background: #fff176;
 }
-
-
 
 .details {
     background-color: #ffcbbb;
@@ -82,39 +82,6 @@ h1, h2, h3, h4, h5 {
     margin: 0;
 }
 
-nav {
-    width: 100%;
-    height: 10%;
-    background: #FFD670;
-    border-bottom: 2px solid #43A4C9;
-}
-
-nav a {
-  text-decoration: none;
-  color: #000000;
-  display: block;
-}
-
-nav ul {
-    list-style-type: none;
-    white-space: nowrap;
-    overflow: auto;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-nav ul li {
-    height: 100%;
-    width: 120px;
-    padding: 0px 10px;
-    display: inline-block;
-    font-size: 1.4em;
-    line-height: 50px;
-}
-
 user agent stylesheeth3 {
     display: block;
     font-size: 1.17em;
@@ -125,14 +92,20 @@ user agent stylesheeth3 {
     font-weight: bold;
 }
 
+.navbar-default {
+    background-color: #FFD670;
+    border-color: #FFCC4D;
+}
+
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle {
+    background-color: #FFCC4D;
+    border-color: #FFCC4D;
+}
+
 .pages {
     position: absolute;
     top: 10%;
     width: 100%;
-}
-
-.active {
-    background: #43A4C9;
 }
 
 @keyframes slideOutLeft {
