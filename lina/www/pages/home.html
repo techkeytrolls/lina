@@ -1,8 +1,21 @@
-<div class="emobutton" onclick="insertEmo('Sad')">Sad</div>
-<div class="emobutton" onclick="insertEmo('Happy')">Happy</div>
+<div class="emobutton" onclick="insertEmo('Sad')" data-toggle="modal" data-target="#statusModal">Sad</div>
+<div class="emobutton" onclick="insertEmo('Happy')" data-toggle="modal" data-target="#statusModal">Happy</div>
 
-<div class="bottom-pane">
-    <h1>What Happened?</h1>
-    <input label="New Event"></input><br />
-    <button class="standard">Update</button>
+<div class="modal fade" id="statusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Add new</h3>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" placeholder="What happened?"></input>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">Update</button>
+                <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+        
+    </div>
 </div>
