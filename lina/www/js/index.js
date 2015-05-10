@@ -119,13 +119,13 @@ emoApp.service("DatabaseHelper", function($window){
     };
     
     this.createFixtures = function(tx) {
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430632040.0, "Sad", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430545640.0, "Happy", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430459240.0, "Happy", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430372840.0, "Happy", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430286440.0, "Sad", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430200040.0, "Sad", "This is a test")')
-        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430113640.0, "Sad", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1431154033.0, "Sad", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1431067633.0, "Sad", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430981233.0, "Happy", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430894833.0, "Sad", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430808433.0, "Sad", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430722033.0, "Happy", "This is a test")');
+tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430635633.0, "Sad", "This is a test")');
     }
 
     // Create database 
@@ -227,8 +227,17 @@ emoApp.controller("reportController", ['$scope', 'DatabaseHelper', function($sco
     var db = dh.openDatabase();
     db.transaction(function(tx) { $scope.getData(tx) });
     
+    var strip_time = function(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    };
+    
     $scope.getData = function(tx) {
-        tx.executeSql('SELECT * FROM demo order by id desc limit 7',[] , $scope.updateView, dh.errorCB);
+        var currentDate = new Date();
+        currentDate = strip_time(currentDate)
+        var lastWeek = currentDate.setDate(currentDate.getDate() - 7) / 1000
+        
+        
+        tx.executeSql('SELECT * FROM demo where id >= ' + lastWeek + ' order by id desc',[] , $scope.updateView, dh.errorCB);
     }
     
     $scope.updateView = function(tx, result) {
@@ -245,36 +254,40 @@ emoApp.controller("reportController", ['$scope', 'DatabaseHelper', function($sco
             weekday[5] = "Friday";
             weekday[6] = "Saturday";
             
-            var previous_date = (new Date(0));
+            var currentDate = new Date();
+            currentDate = strip_time(currentDate);
             
             $scope.series = ['Sad', 'Happy'];
             $scope.data = [[],[]];
+            Chart.defaults.global.colours = ['#FD1F5E','#66BCDD'];
             
-            for (var x = 0; x < result.rows.length; x++) {
-                var item = result.rows.item(x);
+            for (var x = 0; x < 7; x++) {
+            
+                $scope.labels.unshift(weekday[currentDate.getDay()]);
+                $scope.data[0].unshift(0);
+                $scope.data[1].unshift(0);
                 
-                var currentDate = new Date(item.id * 1000);
-                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-                
-                if (currentDate.getTime() != previous_date.getTime()) {
-                    $scope.labels.unshift(weekday[currentDate.getDay()]);
-                    previous_date = currentDate;
-                    $scope.data[0].unshift(0);
-                    $scope.data[1].unshift(0);
+                for (var y = 0; y < result.rows.length; y++) {
+                    var item = result.rows.item(y);
+                    var currentItemDate = new Date(item.id * 1000);
+                    currentItemDate = strip_time(currentItemDate);
+
+                    if (currentDate.getTime() == currentItemDate.getTime()) {
+                        if (item.data == 'Sad') {
+                            $scope.data[0][0]++;
+                        } else if (item.data == 'Happy') {
+                            $scope.data[1][0]++;
+                        }
+                    }
                 }
                 
-                if (item.data == 'Sad') {
-                    $scope.data[0][0]++;
-                } else if (item.data == 'Happy') {
-                    $scope.data[1][0]++;
-                }
-                
+                currentDate.setDate(currentDate.getDate() - 1);
             }
         });
     }
     
     $scope.onClick = function (points, evt) {
-        console.log(points, evt);
+        //TODO: List the statuses
     };
 }]);
 

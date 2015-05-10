@@ -11,4 +11,4 @@ for x in xrange(7):
     emo = ['Sad', 'Happy']
     randomEmo = random.choice(emo)
     
-    print ("tx.executeSql('INSERT INTO demo (id, data, note) VALUES ({}, \"{}\", \"{}\")')".format(epoch, randomEmo, "This is a test")) 
+    print ("tx.executeSql('INSERT INTO demo (id, data, note) VALUES ({}, \"{}\", \"{}\")');".format(epoch, randomEmo, "This is a test")) 
