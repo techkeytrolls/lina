@@ -72,7 +72,7 @@ var app = {
     }
 };
 
-var emoApp = angular.module("emoApp", ['ngRoute', 'ngAnimate']);
+var emoApp = angular.module("emoApp", ['ngRoute', 'ngAnimate', 'chart.js']);
 
 emoApp.config(function($routeProvider) {
     $routeProvider
@@ -113,7 +113,20 @@ emoApp.service("DatabaseHelper", function($window){
     this.createDB = function() {
         var db = this.openDatabase();
         db.transaction(this.createTable, this.errorCB, this.successCB);
+        
+        // DEBUG::
+        //db.transaction(this.createFixtures)
     };
+    
+    this.createFixtures = function(tx) {
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430632040.0, "Sad", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430545640.0, "Happy", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430459240.0, "Happy", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430372840.0, "Happy", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430286440.0, "Sad", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430200040.0, "Sad", "This is a test")')
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (1430113640.0, "Sad", "This is a test")')
+    }
 
     // Create database 
     this.createTable = function(tx) {
@@ -124,7 +137,7 @@ emoApp.service("DatabaseHelper", function($window){
     this.emptyEmos = function() {
         var db = this.openDatabase();
         db.transaction(this.deleteAll, this.errorCB, this.successCB);
-        this.refreshRecords();
+        //this.refreshRecords();
     };
 
     // Delete all reconrds 
@@ -132,9 +145,9 @@ emoApp.service("DatabaseHelper", function($window){
         tx.executeSql('DELETE FROM demo');
     };
     
-    this.insert = function(tx, emoState) {
-        var dt = (new Date).getTime();
-        tx.executeSql('INSERT INTO demo (id, data) VALUES (' + dt + ', "' + emoState + '")');
+    this.insert = function(tx, emoState, note) {
+        var dt = (new Date).getTime() / 1000;
+        tx.executeSql('INSERT INTO demo (id, data, note) VALUES (' + dt + ', "' + emoState + '", "' + note + '")');
     };
     
     this.refreshRecords = function() {
@@ -166,13 +179,14 @@ emoApp.service("DatabaseHelper", function($window){
         for (var i=0; i<len; i++){
             content = content +            '<div class="details" horizontal="" layout="">';
             content = content +            '<div class="details-name" flex="">';
-            content = content +                '<p><code data-anchor-id="core-list.attributes.height">'+ new Date(results.rows.item(i).id).toISOString() +'</code></p>'
+            content = content +                '<p><code data-anchor-id="core-list.attributes.height">'+ new Date(results.rows.item(i).id * 1000).toISOString() +'</code></p>'
             content = content +            '</div>';
             content = content +            '<div class="details-info" flex="" three="">';
             content = content +                '<marked-element text="{{attribute.description}}">';
             content = content +                    '<p>' + results.rows.item(i).data + '</p>';
             content = content +                '</marked-element>';
             content = content +            '</div>';
+            content = content +            '<div>' + results.rows.item(i).note + '</div>';
             content = content +        '</div>';
         }
 
@@ -195,16 +209,74 @@ emoApp.run(['DatabaseHelper', function(dh) {
 emoApp.controller("homeController", ['$scope', 'DatabaseHelper', function($scope, dh) {
     $scope.name = "Home";
     
-    $scope.insertEmo = function(emoState) {
+    $scope.selectedEmo = '';
+    $scope.newUpdate = '';
+    
+    $scope.setEmo = function(emoState) {
+        $scope.selectedEmo = emoState;
+    }
+    
+    $scope.insertEmo = function() {
         var db = dh.openDatabase();
-        db.transaction(function(tx) { dh.insert(tx, emoState) }, dh.errorCB, dh.successCB);
-        dh.refreshRecords();
+        db.transaction(function(tx) { dh.insert(tx, $scope.selectedEmo, $scope.newUpdate) }, dh.errorCB, dh.successCB);
+        //dh.refreshRecords();
     }
 }]);
 
-emoApp.controller("reportController", function($scope) {
-    $scope.name = "Report";
-});
+emoApp.controller("reportController", ['$scope', 'DatabaseHelper', function($scope, dh) {
+    var db = dh.openDatabase();
+    db.transaction(function(tx) { $scope.getData(tx) });
+    
+    $scope.getData = function(tx) {
+        tx.executeSql('SELECT * FROM demo order by id desc limit 7',[] , $scope.updateView, dh.errorCB);
+    }
+    
+    $scope.updateView = function(tx, result) {
+        $scope.$apply( function() {
+            
+            $scope.labels = []
+            
+            var weekday = new Array(7);
+            weekday[0]=  "Sunday";
+            weekday[1] = "Monday";
+            weekday[2] = "Tuesday";
+            weekday[3] = "Wednesday";
+            weekday[4] = "Thursday";
+            weekday[5] = "Friday";
+            weekday[6] = "Saturday";
+            
+            var previous_date = (new Date(0));
+            
+            $scope.series = ['Sad', 'Happy'];
+            $scope.data = [[],[]];
+            
+            for (var x = 0; x < result.rows.length; x++) {
+                var item = result.rows.item(x);
+                
+                var currentDate = new Date(item.id * 1000);
+                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+                
+                if (currentDate.getTime() != previous_date.getTime()) {
+                    $scope.labels.unshift(weekday[currentDate.getDay()]);
+                    previous_date = currentDate;
+                    $scope.data[0].unshift(0);
+                    $scope.data[1].unshift(0);
+                }
+                
+                if (item.data == 'Sad') {
+                    $scope.data[0][0]++;
+                } else if (item.data == 'Happy') {
+                    $scope.data[1][0]++;
+                }
+                
+            }
+        });
+    }
+    
+    $scope.onClick = function (points, evt) {
+        console.log(points, evt);
+    };
+}]);
 
 emoApp.controller("debugController", ['$scope', 'DatabaseHelper', function($scope, dh) {
     $scope.name = "Debug";
